@@ -1,0 +1,201 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "IAM entities for Service Catalog demo.",
+  "Mappings": {
+    "Region2Api": {
+      "us-east-1": {
+        "Endpoint": "servicecatalog.us-east-1.amazonaws.com"
+      },
+      "us-west-2": {
+        "Endpoint": "servicecatalog.us-west-2.amazonaws.com"
+      }
+    }
+  },
+  "Resources": {
+    "ProductLauncher": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": {
+                  "Fn::FindInMap": [
+                    "Region2Api",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "Endpoint"
+                  ]
+                }
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "ServiceCatalogLaunchPermissions",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "catalog-admin:*",
+                    "servicecatalog:*",
+                    "cloudformation:ValidateTemplate",
+                    "cloudformation:CreateUploadBucket",
+                    "cloudformation:ListStacks",
+                    "cloudformation:CreateStack",
+                    "cloudformation:DescribeStacks",
+                    "cloudformation:DeleteStack",
+                    "cloudformation:GetTemplateSummary",
+                    "ec2:*",
+                    "s3:*",
+                    "iam:List*",
+                    "iam:Get*",
+                    "iam:PassRole",
+                    "iam:CreateRole",
+                    "iam:PutRolePolicy"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CommonTeamPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "TeamA"
+          },
+          {
+            "Ref": "TeamB"
+          }
+        ],
+        "PolicyName": "CommonTeamPolicy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "catalog-user:*",
+                "servicecatalog:*",
+                "catalog-admin:DescribeProductVersions",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:GetMetricStatistics",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus",
+                "ec2:DescribeImages",
+                "ec2:DescribeKeyPairs",
+                "ec2:DescribeVpcs",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeTags"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    },
+    "TeamA": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::102157909331:root"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "MinimalServiceCatalogUserPermissions",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Action": [
+                    "ec2:StartInstances",
+                    "ec2:StopInstances",
+                    "ec2:RebootInstances",
+                    "ec2:TerminateInstances"
+                  ],
+                  "Condition": {
+                    "StringEquals": {
+                      "ec2:ResourceTag/DevOpsTeam": "TeamA"
+                    }
+                  },
+                  "Resource": "*",
+                  "Effect": "Allow"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "TeamB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::102157909331:root"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "MinimalServiceCatalogUserPermissions",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Action": [
+                    "ec2:StartInstances",
+                    "ec2:StopInstances",
+                    "ec2:RebootInstances",
+                    "ec2:TerminateInstances"
+                  ],
+                  "Condition": {
+                    "StringEquals": {
+                      "ec2:ResourceTag/DevOpsTeam": "TeamB"
+                    }
+                  },
+                  "Resource": "*",
+                  "Effect": "Allow"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
