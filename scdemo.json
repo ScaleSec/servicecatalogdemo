@@ -50,7 +50,6 @@
                     "servicecatalog:*",
                     "cloudformation:ValidateTemplate",
                     "cloudformation:CreateUploadBucket",
-                    "cloudformation:ListStacks",
                     "cloudformation:CreateStack",
                     "cloudformation:DescribeStacks",
                     "cloudformation:DeleteStack",
