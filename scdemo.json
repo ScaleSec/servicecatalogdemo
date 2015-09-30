@@ -118,7 +118,18 @@
               "Sid": "",
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:aws:iam::102157909331:root"
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":root"
+                    ]
+                  ]
+                }
               },
               "Action": "sts:AssumeRole"
             }
@@ -162,7 +173,18 @@
               "Sid": "",
               "Effect": "Allow",
               "Principal": {
-                "AWS": "arn:aws:iam::102157909331:root"
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:iam::",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":root"
+                    ]
+                  ]
+                }
               },
               "Action": "sts:AssumeRole"
             }
